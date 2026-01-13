@@ -1,4 +1,4 @@
-import { Globe, Store, Settings } from "lucide-react";
+import { Globe, Store } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 export const BottomNavigation = () => {
@@ -17,12 +17,6 @@ export const BottomNavigation = () => {
       label: "السوق المحلي",
       icon: Store,
       path: "/local",
-    },
-    {
-      id: "admin",
-      label: "الإدارة",
-      icon: Settings,
-      path: "/admin",
     },
   ];
 
