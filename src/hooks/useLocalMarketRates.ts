@@ -61,8 +61,8 @@ export const useLocalMarketRates = () => {
             id: doc.id,
             name: data.name || "",
             nameAr: data.nameAr || "",
-            rate: data.rate || 0,
-            change: data.change || 0,
+            rate: Number(data.rate) || 0,
+            change: Number(data.change) || 0,
             flag: data.flag || "",
             category: data.category || "currency",
           };
