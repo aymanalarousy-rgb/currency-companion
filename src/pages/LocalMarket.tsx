@@ -62,7 +62,7 @@ export const LocalMarket = () => {
 
         <div className="mt-6 p-4 rounded-lg bg-secondary/50 border border-border">
           <p className="text-xs text-muted-foreground text-center">
-            📢 أسعار السوق الموازي تُحدث يومياً من Firestore
+            📢 أسعار السوق الموازي تُحدث يومياً
           </p>
         </div>
       </main>

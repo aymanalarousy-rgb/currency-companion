@@ -14,7 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      local_market_rates: {
+        Row: {
+          category: string
+          change: number
+          created_at: string
+          flag: string
+          id: string
+          name: string
+          name_ar: string
+          rate: number
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          change?: number
+          created_at?: string
+          flag?: string
+          id: string
+          name: string
+          name_ar: string
+          rate?: number
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          change?: number
+          created_at?: string
+          flag?: string
+          id?: string
+          name?: string
+          name_ar?: string
+          rate?: number
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
