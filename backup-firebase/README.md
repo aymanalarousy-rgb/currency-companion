@@ -2,25 +2,21 @@
 
 ## How to Use This Backup
 
-If you need to switch from Supabase (Lovable Cloud) to Firebase, follow these steps:
+If you need to switch from Lovable Cloud to Firebase, follow these simple steps:
 
 ### Step 1: Replace the Local Market Hook
-Replace `src/hooks/useLocalMarketRates.ts` with `hooks/useLocalMarketRatesFirebase.ts`
+Replace the content of `src/hooks/useLocalMarketRates.ts` with the content from `backup-firebase/hooks/useLocalMarketRatesFirebase.ts`
 
-### Step 2: Use the Admin Page
-The Admin page at `/admin` is already configured to work with Firebase. It allows you to:
-- View all rates
-- Edit rates (name, Arabic name, price, change %)
-- Save all changes to Firebase
-- Initialize default data
+That's it! The app will now read data from Firebase instead of Lovable Cloud.
 
-### Step 3: Firebase Configuration
-The Firebase config is already set up at `src/integrations/firebase/config.ts` with these credentials:
-- Project ID: currency-companion
-- The config includes all necessary Firebase settings
+### Step 2: Manage Prices via Firebase Console
+You will manage all prices directly in the Firebase Console (NOT via the app's Admin page):
 
-### Step 4: Firebase Database Structure
-The data is stored in the `local_market` collection with the following structure:
+**Firebase Console URL:**
+https://console.firebase.google.com/project/currency-companion/firestore
+
+### Firebase Database Structure
+The data is stored in the `local_market` collection with this structure:
 
 ```
 local_market/
@@ -41,25 +37,24 @@ local_market/
 └── ...
 ```
 
-### Available IDs:
-- **Currencies**: usd-blue, usd-white, usd-turkey, usd-dubai, eur, gbp, tnd
-- **Gold**: gold
-- **Banks**: bank-tanmiya, bank-wahda
+### Document IDs:
+- **Currencies**: `usd-blue`, `usd-white`, `usd-turkey`, `usd-dubai`, `eur`, `gbp`, `tnd`
+- **Gold**: `gold`
+- **Banks**: `bank-tanmiya`, `bank-wahda`
 
-### Firebase Console Access
-You can manage your data directly in Firebase Console:
-https://console.firebase.google.com/project/currency-companion
+### How to Update Prices in Firebase Console:
+1. Go to https://console.firebase.google.com/project/currency-companion/firestore
+2. Click on `local_market` collection
+3. Click on the document you want to update (e.g., `usd-blue`)
+4. Edit the `rate` and `change` fields
+5. Click "Update" - changes appear instantly in the app!
 
-### Security Notes
-- The current setup allows read access to everyone
-- For production, set up Firebase Security Rules to restrict write access
-- Consider adding authentication for the admin page
+### Firebase Configuration
+Already configured at `src/integrations/firebase/config.ts`:
+- Project ID: currency-companion
 
 ## Files in This Backup
 
-1. `hooks/useLocalMarketRatesFirebase.ts` - Hook to fetch rates from Firebase
-2. `pages/AdminFirebase.tsx` - Admin page for managing rates (same as current Admin.tsx)
+1. `hooks/useLocalMarketRatesFirebase.ts` - Hook to fetch rates from Firebase (replace src/hooks/useLocalMarketRates.ts with this)
+2. `pages/AdminFirebase.tsx` - Optional admin page (not needed if managing via Firebase Console)
 3. `README.md` - This file
-
-## Current Admin Page Location
-The Admin page is accessible at: `/admin`
