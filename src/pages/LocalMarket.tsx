@@ -2,6 +2,7 @@ import { Header } from "@/components/Header";
 import { CurrencyCard } from "@/components/CurrencyCard";
 import { SectionDivider } from "@/components/SectionDivider";
 import { BottomNavigation } from "@/components/BottomNavigation";
+import { AdBanner } from "@/components/AdBanner";
 import { useLocalMarketRates } from "@/hooks/useLocalMarketRates";
 
 export const LocalMarket = () => {
@@ -36,6 +37,9 @@ export const LocalMarket = () => {
           ))}
         </div>
 
+        {/* إعلان بين الأقسام */}
+        <AdBanner format="rectangle" className="my-6" />
+
         {/* الذهب */}
         <SectionDivider title="المعادن الثمينة" icon="🥇" />
         <div className="space-y-3">
@@ -60,7 +64,10 @@ export const LocalMarket = () => {
           ))}
         </div>
 
-        <div className="mt-6 p-4 rounded-lg bg-secondary/50 border border-border">
+        {/* إعلان في نهاية الصفحة */}
+        <AdBanner format="horizontal" className="mt-6" />
+
+        <div className="mt-4 p-4 rounded-lg bg-secondary/50 border border-border">
           <p className="text-xs text-muted-foreground text-center">
             📢 أسعار السوق الموازي تُحدث يومياً
           </p>
