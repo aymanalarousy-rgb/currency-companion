@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { GlobalCurrencyCard } from "@/components/GlobalCurrencyCard";
 import { BottomNavigation } from "@/components/BottomNavigation";
+import { AdBanner } from "@/components/AdBanner";
 import { GlobalCurrencyRate } from "@/types/currency";
 
 // Mock data - في الواقع سيتم جلبها من API خارجي
@@ -98,7 +99,7 @@ export const GlobalRates = () => {
 
       <main className="px-4 py-4">
         <div className="space-y-3">
-          {rates.map((currency, index) => (
+          {rates.slice(0, 3).map((currency, index) => (
             <GlobalCurrencyCard
               key={currency.code}
               currency={currency}
@@ -108,7 +109,24 @@ export const GlobalRates = () => {
           ))}
         </div>
 
-        <div className="mt-6 p-4 rounded-lg bg-secondary/50 border border-border">
+        {/* إعلان بين العملات */}
+        <AdBanner format="rectangle" className="my-4" />
+
+        <div className="space-y-3">
+          {rates.slice(3).map((currency, index) => (
+            <GlobalCurrencyCard
+              key={currency.code}
+              currency={currency}
+              index={index + 3}
+              isLoading={isLoading}
+            />
+          ))}
+        </div>
+
+        {/* إعلان في نهاية الصفحة */}
+        <AdBanner format="horizontal" className="mt-6" />
+
+        <div className="mt-4 p-4 rounded-lg bg-secondary/50 border border-border">
           <p className="text-xs text-muted-foreground text-center">
             💡 الأسعار تُحدث تلقائياً من مصادر عالمية موثوقة
           </p>
