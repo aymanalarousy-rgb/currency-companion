@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import { LocalMarket } from "./pages/LocalMarket";
 import { Admin } from "./pages/Admin";
 import NotFound from "./pages/NotFound";
+import { PrivacyPolicy } from "./pages/PrivacyPolicy";
 
 const queryClient = new QueryClient();
 
