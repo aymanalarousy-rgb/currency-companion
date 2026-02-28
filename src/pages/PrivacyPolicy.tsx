@@ -77,7 +77,7 @@ export const PrivacyPolicy = () => {
           <p>
             إذا كان لديك أي أسئلة حول سياسة الخصوصية هذه، يمكنك التواصل معنا عبر البريد الإلكتروني:
           </p>
-          <p className="text-primary font-medium mt-1">support@example.com</p>
+          <p className="text-primary font-medium mt-1">libyafreea@gmail.com</p>
         </section>
       </div>
 
