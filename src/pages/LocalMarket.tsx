@@ -6,7 +6,7 @@ import { BottomNavigation } from "@/components/BottomNavigation";
 import { useLocalMarketRates } from "@/hooks/useLocalMarketRates";
 
 export const LocalMarket = () => {
-  const { currencies, gold, banks, lastUpdate, loading, error } = useLocalMarketRates();
+  const { dollar, euro, transfer, lastUpdate, loading, error } = useLocalMarketRates();
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -29,34 +29,34 @@ export const LocalMarket = () => {
           </div>
         )}
 
-        {/* العملات */}
-        <SectionDivider title="العملات" icon="💱" />
+        {/* الدولار الأمريكي */}
+        <SectionDivider title="الدولار الأمريكي" icon="🇺🇸" />
         <div className="space-y-3">
-          {currencies.map((currency, index) => (
+          {dollar.map((currency, index) => (
             <CurrencyCard key={currency.id} currency={currency} index={index} />
           ))}
         </div>
 
-        {/* الذهب */}
-        <SectionDivider title="المعادن الثمينة" icon="🥇" />
+        {/* اليورو الأوروبي */}
+        <SectionDivider title="اليورو الأوروبي" icon="🇪🇺" />
         <div className="space-y-3">
-          {gold.map((currency, index) => (
+          {euro.map((currency, index) => (
             <CurrencyCard
               key={currency.id}
               currency={currency}
-              index={index + currencies.length}
+              index={index + dollar.length}
             />
           ))}
         </div>
 
-        {/* المصارف */}
-        <SectionDivider title="أسعار المصارف" icon="🏦" />
+        {/* حوالات خارجية */}
+        <SectionDivider title="حوالات خارجية" icon="💸" />
         <div className="space-y-3">
-          {banks.map((currency, index) => (
+          {transfer.map((currency, index) => (
             <CurrencyCard
               key={currency.id}
               currency={currency}
-              index={index + currencies.length + gold.length}
+              index={index + dollar.length + euro.length}
             />
           ))}
         </div>
