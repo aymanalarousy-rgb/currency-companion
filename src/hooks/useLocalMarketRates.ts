@@ -3,9 +3,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { CurrencyRate } from "@/types/currency";
 
 interface LocalMarketState {
-  currencies: CurrencyRate[];
-  gold: CurrencyRate[];
-  banks: CurrencyRate[];
+  dollar: CurrencyRate[];
+  euro: CurrencyRate[];
+  transfer: CurrencyRate[];
   lastUpdate: string;
   loading: boolean;
   error: string | null;
@@ -13,9 +13,9 @@ interface LocalMarketState {
 
 export const useLocalMarketRates = () => {
   const [state, setState] = useState<LocalMarketState>({
-    currencies: [],
-    gold: [],
-    banks: [],
+    dollar: [],
+    euro: [],
+    transfer: [],
     lastUpdate: new Date().toLocaleString("ar-LY"),
     loading: true,
     error: null,
@@ -30,9 +30,9 @@ export const useLocalMarketRates = () => {
 
       if (error) throw error;
 
-      const currencies: CurrencyRate[] = [];
-      const gold: CurrencyRate[] = [];
-      const banks: CurrencyRate[] = [];
+      const dollar: CurrencyRate[] = [];
+      const euro: CurrencyRate[] = [];
+      const transfer: CurrencyRate[] = [];
       let lastUpdateTime = new Date().toLocaleString("ar-LY");
 
       data?.forEach((item) => {
@@ -43,7 +43,7 @@ export const useLocalMarketRates = () => {
           rate: Number(item.rate),
           change: Number(item.change),
           flag: item.flag,
-          category: item.category as "currency" | "gold" | "bank",
+          category: item.category as "currency" | "gold" | "bank" | "dollar" | "euro" | "transfer",
         };
 
         if (item.updated_at) {
@@ -51,21 +51,22 @@ export const useLocalMarketRates = () => {
         }
 
         switch (item.category) {
-          case "gold":
-            gold.push(rate);
+          case "dollar":
+            dollar.push(rate);
             break;
-          case "bank":
-            banks.push(rate);
+          case "euro":
+            euro.push(rate);
             break;
-          default:
-            currencies.push(rate);
+          case "transfer":
+            transfer.push(rate);
+            break;
         }
       });
 
       setState({
-        currencies,
-        gold,
-        banks,
+        dollar,
+        euro,
+        transfer,
         lastUpdate: lastUpdateTime,
         loading: false,
         error: null,
