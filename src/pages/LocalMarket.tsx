@@ -37,8 +37,8 @@ export const LocalMarket = () => {
           ))}
         </div>
 
-        {/* اليورو الأوروبي */}
-        <SectionDivider title="اليورو الأوروبي" icon="🇪🇺" />
+        {/* عملات أخرى ومعادن */}
+        <SectionDivider title="عملات أخرى ومعادن" icon="💱" />
         <div className="space-y-3">
           {euro.map((currency, index) => (
             <CurrencyCard
