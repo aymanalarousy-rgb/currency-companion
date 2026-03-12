@@ -49,8 +49,8 @@ export const LocalMarket = () => {
           ))}
         </div>
 
-        {/* حوالات خارجية */}
-        <SectionDivider title="حوالات خارجية" icon="💸" />
+        {/* المصارف */}
+        <SectionDivider title="المصارف" icon="🏦" />
         <div className="space-y-3">
           {transfer.map((currency, index) => (
             <CurrencyCard
