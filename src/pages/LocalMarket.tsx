@@ -30,7 +30,7 @@ export const LocalMarket = () => {
         )}
 
         {/* الدولار الأمريكي */}
-        <SectionDivider title="الدولار الأمريكي" icon="🇺🇸" />
+        <SectionDivider title="الدولار الأمريكي" icon="💵" />
         <div className="space-y-3">
           {dollar.map((currency, index) => (
             <CurrencyCard key={currency.id} currency={currency} index={index} />
@@ -38,7 +38,7 @@ export const LocalMarket = () => {
         </div>
 
         {/* عملات أخرى ومعادن */}
-        <SectionDivider title="عملات أخرى ومعادن" icon="💱" />
+        <SectionDivider title="اليورو الأوروبي" icon="💶" />
         <div className="space-y-3">
           {euro.map((currency, index) => (
             <CurrencyCard
@@ -50,7 +50,7 @@ export const LocalMarket = () => {
         </div>
 
         {/* المصارف */}
-        <SectionDivider title="المصارف" icon="🏦" />
+        <SectionDivider title="حوالات خارجية" icon="💸" />
         <div className="space-y-3">
           {transfer.map((currency, index) => (
             <CurrencyCard
