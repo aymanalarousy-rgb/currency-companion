@@ -35,6 +35,7 @@ export const useLocalMarketRates = () => {
       const dollar: CurrencyRate[] = [];
       const euro: CurrencyRate[] = [];
       const transfer: CurrencyRate[] = [];
+      const goldIntl: CurrencyRate[] = [];
       let lastUpdateTime = new Date().toLocaleString("ar-LY");
 
       data?.forEach((item) => {
