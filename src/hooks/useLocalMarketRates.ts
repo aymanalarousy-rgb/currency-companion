@@ -17,6 +17,7 @@ export const useLocalMarketRates = () => {
     dollar: [],
     euro: [],
     transfer: [],
+    goldIntl: [],
     lastUpdate: new Date().toLocaleString("ar-LY"),
     loading: true,
     error: null,
