@@ -73,6 +73,7 @@ export const useLocalMarketRates = () => {
         dollar,
         euro,
         transfer,
+        goldIntl,
         lastUpdate: lastUpdateTime,
         loading: false,
         error: null,
