@@ -1,12 +1,19 @@
+import { useEffect } from "react";
 import { Header } from "@/components/Header";
 import { CurrencyCard } from "@/components/CurrencyCard";
 import { SectionDivider } from "@/components/SectionDivider";
 import { BottomNavigation } from "@/components/BottomNavigation";
+import { supabase } from "@/integrations/supabase/client";
 
 import { useLocalMarketRates } from "@/hooks/useLocalMarketRates";
 
 export const LocalMarket = () => {
-  const { dollar, euro, transfer, lastUpdate, loading, error } = useLocalMarketRates();
+  const { dollar, euro, transfer, goldIntl, lastUpdate, loading, error } = useLocalMarketRates();
+
+  // Fetch gold price on mount (triggers edge function to update)
+  useEffect(() => {
+    supabase.functions.invoke("fetch-gold-price").catch(console.error);
+  }, []);
 
   return (
     <div className="min-h-screen bg-background pb-24">
