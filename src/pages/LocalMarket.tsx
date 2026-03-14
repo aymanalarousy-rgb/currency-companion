@@ -30,7 +30,7 @@ export const LocalMarket = () => {
         )}
 
         {/* الدولار الأمريكي */}
-        <SectionDivider title="الدولار الأمريكي" icon="🇺🇸" />
+        <SectionDivider title="الدولار الأمريكي" icon="💵" />
         <div className="space-y-3">
           {dollar.map((currency, index) => (
             <CurrencyCard key={currency.id} currency={currency} index={index} />
