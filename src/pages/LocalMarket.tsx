@@ -38,7 +38,7 @@ export const LocalMarket = () => {
         </div>
 
         {/* عملات أخرى ومعادن */}
-        <SectionDivider title="عملات أخرى ومعادن" icon="💱" />
+        <SectionDivider title="اليورو الأوروبي" icon="💶" />
         <div className="space-y-3">
           {euro.map((currency, index) => (
             <CurrencyCard
