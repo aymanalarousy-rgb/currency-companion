@@ -1,12 +1,19 @@
+import { useEffect } from "react";
 import { Header } from "@/components/Header";
 import { CurrencyCard } from "@/components/CurrencyCard";
 import { SectionDivider } from "@/components/SectionDivider";
 import { BottomNavigation } from "@/components/BottomNavigation";
+import { supabase } from "@/integrations/supabase/client";
 
 import { useLocalMarketRates } from "@/hooks/useLocalMarketRates";
 
 export const LocalMarket = () => {
-  const { dollar, euro, transfer, lastUpdate, loading, error } = useLocalMarketRates();
+  const { dollar, euro, transfer, goldIntl, lastUpdate, loading, error } = useLocalMarketRates();
+
+  // Fetch gold price on mount (triggers edge function to update)
+  useEffect(() => {
+    supabase.functions.invoke("fetch-gold-price").catch(console.error);
+  }, []);
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -61,9 +68,25 @@ export const LocalMarket = () => {
           ))}
         </div>
 
+        {/* الذهب العالمي */}
+        {goldIntl.length > 0 && (
+          <>
+            <SectionDivider title="الذهب العالمي" icon="🥇" />
+            <div className="space-y-3">
+              {goldIntl.map((currency, index) => (
+                <CurrencyCard
+                  key={currency.id}
+                  currency={currency}
+                  index={index + dollar.length + euro.length + transfer.length}
+                />
+              ))}
+            </div>
+          </>
+        )}
+
         <div className="mt-6 p-4 rounded-lg bg-secondary/50 border border-border">
           <p className="text-xs text-muted-foreground text-center">
-            📢 أسعار السوق الموازي تُحدث يومياً
+            📢 أسعار السوق الموازي تُحدث يومياً | سعر الذهب العالمي يُحدث تلقائياً
           </p>
         </div>
       </main>

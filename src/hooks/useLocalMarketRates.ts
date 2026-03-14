@@ -6,6 +6,7 @@ interface LocalMarketState {
   dollar: CurrencyRate[];
   euro: CurrencyRate[];
   transfer: CurrencyRate[];
+  goldIntl: CurrencyRate[];
   lastUpdate: string;
   loading: boolean;
   error: string | null;
@@ -16,6 +17,7 @@ export const useLocalMarketRates = () => {
     dollar: [],
     euro: [],
     transfer: [],
+    goldIntl: [],
     lastUpdate: new Date().toLocaleString("ar-LY"),
     loading: true,
     error: null,
@@ -33,6 +35,7 @@ export const useLocalMarketRates = () => {
       const dollar: CurrencyRate[] = [];
       const euro: CurrencyRate[] = [];
       const transfer: CurrencyRate[] = [];
+      const goldIntl: CurrencyRate[] = [];
       let lastUpdateTime = new Date().toLocaleString("ar-LY");
 
       data?.forEach((item) => {
@@ -60,6 +63,9 @@ export const useLocalMarketRates = () => {
           case "transfer":
             transfer.push(rate);
             break;
+          case "gold_intl":
+            goldIntl.push(rate);
+            break;
         }
       });
 
@@ -67,6 +73,7 @@ export const useLocalMarketRates = () => {
         dollar,
         euro,
         transfer,
+        goldIntl,
         lastUpdate: lastUpdateTime,
         loading: false,
         error: null,
