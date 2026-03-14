@@ -50,7 +50,7 @@ export const LocalMarket = () => {
         </div>
 
         {/* المصارف */}
-        <SectionDivider title="المصارف" icon="🏦" />
+        <SectionDivider title="حوالات خارجية" icon="💸" />
         <div className="space-y-3">
           {transfer.map((currency, index) => (
             <CurrencyCard
