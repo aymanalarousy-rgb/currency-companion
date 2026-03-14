@@ -68,9 +68,25 @@ export const LocalMarket = () => {
           ))}
         </div>
 
+        {/* الذهب العالمي */}
+        {goldIntl.length > 0 && (
+          <>
+            <SectionDivider title="الذهب العالمي" icon="🥇" />
+            <div className="space-y-3">
+              {goldIntl.map((currency, index) => (
+                <CurrencyCard
+                  key={currency.id}
+                  currency={currency}
+                  index={index + dollar.length + euro.length + transfer.length}
+                />
+              ))}
+            </div>
+          </>
+        )}
+
         <div className="mt-6 p-4 rounded-lg bg-secondary/50 border border-border">
           <p className="text-xs text-muted-foreground text-center">
-            📢 أسعار السوق الموازي تُحدث يومياً
+            📢 أسعار السوق الموازي تُحدث يومياً | سعر الذهب العالمي يُحدث تلقائياً
           </p>
         </div>
       </main>
