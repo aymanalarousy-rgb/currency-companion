@@ -6,6 +6,7 @@ interface LocalMarketState {
   dollar: CurrencyRate[];
   euro: CurrencyRate[];
   transfer: CurrencyRate[];
+  goldIntl: CurrencyRate[];
   lastUpdate: string;
   loading: boolean;
   error: string | null;
