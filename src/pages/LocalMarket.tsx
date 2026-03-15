@@ -1,19 +1,11 @@
-import { useEffect } from "react";
 import { Header } from "@/components/Header";
 import { CurrencyCard } from "@/components/CurrencyCard";
 import { SectionDivider } from "@/components/SectionDivider";
 import { BottomNavigation } from "@/components/BottomNavigation";
-import { supabase } from "@/integrations/supabase/client";
-
 import { useLocalMarketRates } from "@/hooks/useLocalMarketRates";
 
 export const LocalMarket = () => {
-  const { dollar, euro, transfer, goldIntl, lastUpdate, loading, error } = useLocalMarketRates();
-
-  // Fetch gold price on mount (triggers edge function to update)
-  useEffect(() => {
-    supabase.functions.invoke("fetch-gold-price").catch(console.error);
-  }, []);
+  const { currencies, gold, banks, lastUpdate, loading, error } = useLocalMarketRates();
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -36,48 +28,40 @@ export const LocalMarket = () => {
           </div>
         )}
 
-        {/* الدولار الأمريكي */}
-        <SectionDivider title="الدولار الأمريكي" icon="💵" />
+        {/* العملات */}
+        <SectionDivider title="العملات" icon="💱" />
         <div className="space-y-3">
-          {dollar.map((currency, index) => (
+          {currencies.map((currency, index) => (
             <CurrencyCard key={currency.id} currency={currency} index={index} />
           ))}
         </div>
 
-        {/* عملات أخرى ومعادن */}
-        <SectionDivider title="اليورو الأوروبي" icon="💶" />
-        <div className="space-y-3">
-          {euro.map((currency, index) => (
-            <CurrencyCard
-              key={currency.id}
-              currency={currency}
-              index={index + dollar.length}
-            />
-          ))}
-        </div>
-
-        {/* المصارف */}
-        <SectionDivider title="حوالات خارجية" icon="💸" />
-        <div className="space-y-3">
-          {transfer.map((currency, index) => (
-            <CurrencyCard
-              key={currency.id}
-              currency={currency}
-              index={index + dollar.length + euro.length}
-            />
-          ))}
-        </div>
-
-        {/* الذهب العالمي */}
-        {goldIntl.length > 0 && (
+        {/* المعادن */}
+        {gold.length > 0 && (
           <>
-            <SectionDivider title="الذهب العالمي" icon="🥇" />
+            <SectionDivider title="المعادن" icon="🥇" />
             <div className="space-y-3">
-              {goldIntl.map((currency, index) => (
+              {gold.map((currency, index) => (
                 <CurrencyCard
                   key={currency.id}
                   currency={currency}
-                  index={index + dollar.length + euro.length + transfer.length}
+                  index={index + currencies.length}
+                />
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* المصارف */}
+        {banks.length > 0 && (
+          <>
+            <SectionDivider title="المصارف" icon="🏦" />
+            <div className="space-y-3">
+              {banks.map((currency, index) => (
+                <CurrencyCard
+                  key={currency.id}
+                  currency={currency}
+                  index={index + currencies.length + gold.length}
                 />
               ))}
             </div>
@@ -86,7 +70,7 @@ export const LocalMarket = () => {
 
         <div className="mt-6 p-4 rounded-lg bg-secondary/50 border border-border">
           <p className="text-xs text-muted-foreground text-center">
-            📢 أسعار السوق الموازي تُحدث يومياً | سعر الذهب العالمي يُحدث تلقائياً
+            📢 أسعار السوق الموازي تُحدث يومياً
           </p>
         </div>
       </main>

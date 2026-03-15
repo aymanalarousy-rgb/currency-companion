@@ -3,10 +3,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { CurrencyRate } from "@/types/currency";
 
 interface LocalMarketState {
-  dollar: CurrencyRate[];
-  euro: CurrencyRate[];
-  transfer: CurrencyRate[];
-  goldIntl: CurrencyRate[];
+  currencies: CurrencyRate[];
+  gold: CurrencyRate[];
+  banks: CurrencyRate[];
   lastUpdate: string;
   loading: boolean;
   error: string | null;
@@ -14,10 +13,9 @@ interface LocalMarketState {
 
 export const useLocalMarketRates = () => {
   const [state, setState] = useState<LocalMarketState>({
-    dollar: [],
-    euro: [],
-    transfer: [],
-    goldIntl: [],
+    currencies: [],
+    gold: [],
+    banks: [],
     lastUpdate: new Date().toLocaleString("ar-LY"),
     loading: true,
     error: null,
@@ -32,10 +30,9 @@ export const useLocalMarketRates = () => {
 
       if (error) throw error;
 
-      const dollar: CurrencyRate[] = [];
-      const euro: CurrencyRate[] = [];
-      const transfer: CurrencyRate[] = [];
-      const goldIntl: CurrencyRate[] = [];
+      const currencies: CurrencyRate[] = [];
+      const gold: CurrencyRate[] = [];
+      const banks: CurrencyRate[] = [];
       let lastUpdateTime = new Date().toLocaleString("ar-LY");
 
       data?.forEach((item) => {
@@ -46,7 +43,7 @@ export const useLocalMarketRates = () => {
           rate: Number(item.rate),
           change: Number(item.change),
           flag: item.flag,
-          category: item.category as "currency" | "gold" | "bank" | "dollar" | "euro" | "transfer",
+          category: item.category as CurrencyRate["category"],
         };
 
         if (item.updated_at) {
@@ -54,26 +51,22 @@ export const useLocalMarketRates = () => {
         }
 
         switch (item.category) {
-          case "dollar":
-            dollar.push(rate);
+          case "currency":
+            currencies.push(rate);
             break;
-          case "euro":
-            euro.push(rate);
+          case "gold":
+            gold.push(rate);
             break;
-          case "transfer":
-            transfer.push(rate);
-            break;
-          case "gold_intl":
-            goldIntl.push(rate);
+          case "bank":
+            banks.push(rate);
             break;
         }
       });
 
       setState({
-        dollar,
-        euro,
-        transfer,
-        goldIntl,
+        currencies,
+        gold,
+        banks,
         lastUpdate: lastUpdateTime,
         loading: false,
         error: null,
@@ -89,10 +82,8 @@ export const useLocalMarketRates = () => {
   };
 
   useEffect(() => {
-    // Initial fetch
     fetchRates();
 
-    // Subscribe to realtime updates
     const channel = supabase
       .channel("local_market_rates_changes")
       .on(
@@ -103,7 +94,6 @@ export const useLocalMarketRates = () => {
           table: "local_market_rates",
         },
         () => {
-          // Refetch all data when any change occurs
           fetchRates();
         }
       )
