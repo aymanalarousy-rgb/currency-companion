@@ -3,30 +3,31 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response("ok", { headers: corsHeaders });
   }
 
   try {
-    // Fetch gold price from metals.live (free, no API key needed)
-    const response = await fetch("https://api.metals.live/v1/spot");
+    // Use goldapi.io free tier or fallback to frankfurter for XAU
+    const response = await fetch(
+      "https://api.frankfurter.dev/v1/latest?from=XAU&to=USD"
+    );
     if (!response.ok) {
-      throw new Error(`metals.live API failed [${response.status}]`);
+      throw new Error(`Frankfurter API failed [${response.status}]`);
     }
 
     const data = await response.json();
-    // metals.live returns array like [{"gold":2345.67,"silver":28.45,...}]
-    const goldPrice = data?.[0]?.gold;
+    // Frankfurter returns { rates: { USD: 2345.67 } } where 1 XAU = X USD
+    const goldPrice = data?.rates?.USD;
 
     if (!goldPrice || typeof goldPrice !== "number") {
       throw new Error("Invalid gold price data received");
     }
 
-    // Get previous price to calculate change
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
@@ -43,15 +44,19 @@ Deno.serve(async (req) => {
         ? Number((((goldPrice - previousRate) / previousRate) * 100).toFixed(2))
         : 0;
 
-    // Update the gold price in DB
     const { error } = await supabase
       .from("local_market_rates")
-      .update({
+      .upsert({
+        id: "gold_international",
+        name: "Gold (Troy Ounce)",
+        name_ar: "الذهب العالمي (أونصة)",
         rate: goldPrice,
         change: change,
+        flag: "🥇",
+        category: "gold_intl",
+        sort_order: 99,
         updated_at: new Date().toISOString(),
-      })
-      .eq("id", "gold_international");
+      });
 
     if (error) throw error;
 
