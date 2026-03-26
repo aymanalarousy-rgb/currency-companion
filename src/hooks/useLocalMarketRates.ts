@@ -35,7 +35,9 @@ export const useLocalMarketRates = () => {
       if (error) throw error;
 
       const currencies: CurrencyRate[] = [];
+      const transfers: CurrencyRate[] = [];
       const gold: CurrencyRate[] = [];
+      const crypto: CurrencyRate[] = [];
       const banks: CurrencyRate[] = [];
       let lastUpdateTime = new Date().toLocaleString("ar-LY");
 
@@ -58,8 +60,14 @@ export const useLocalMarketRates = () => {
           case "currency":
             currencies.push(rate);
             break;
+          case "transfer":
+            transfers.push(rate);
+            break;
           case "gold":
             gold.push(rate);
+            break;
+          case "crypto":
+            crypto.push(rate);
             break;
           case "bank":
             banks.push(rate);
@@ -69,7 +77,9 @@ export const useLocalMarketRates = () => {
 
       setState({
         currencies,
+        transfers,
         gold,
+        crypto,
         banks,
         lastUpdate: lastUpdateTime,
         loading: false,
