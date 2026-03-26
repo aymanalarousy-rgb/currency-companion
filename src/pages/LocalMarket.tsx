@@ -5,7 +5,7 @@ import { BottomNavigation } from "@/components/BottomNavigation";
 import { useLocalMarketRates } from "@/hooks/useLocalMarketRates";
 
 export const LocalMarket = () => {
-  const { currencies, gold, banks, lastUpdate, loading, error } = useLocalMarketRates();
+  const { currencies, transfers, gold, crypto, banks, lastUpdate, loading, error } = useLocalMarketRates();
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -36,12 +36,12 @@ export const LocalMarket = () => {
           ))}
         </div>
 
-        {/* المعادن */}
-        {gold.length > 0 && (
+        {/* الحوالات */}
+        {transfers.length > 0 && (
           <>
-            <SectionDivider title="المعادن" icon="🥇" />
+            <SectionDivider title="الحوالات" icon="💸" />
             <div className="space-y-3">
-              {gold.map((currency, index) => (
+              {transfers.map((currency, index) => (
                 <CurrencyCard
                   key={currency.id}
                   currency={currency}
@@ -52,16 +52,48 @@ export const LocalMarket = () => {
           </>
         )}
 
+        {/* المعادن */}
+        {gold.length > 0 && (
+          <>
+            <SectionDivider title="الذهب والفضة" icon="🌟" />
+            <div className="space-y-3">
+              {gold.map((currency, index) => (
+                <CurrencyCard
+                  key={currency.id}
+                  currency={currency}
+                  index={index + currencies.length + transfers.length}
+                />
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* العملات الرقمية */}
+        {crypto.length > 0 && (
+          <>
+            <SectionDivider title="العملات الرقمية" icon="📱" />
+            <div className="space-y-3">
+              {crypto.map((currency, index) => (
+                <CurrencyCard
+                  key={currency.id}
+                  currency={currency}
+                  index={index + currencies.length + transfers.length + gold.length}
+                />
+              ))}
+            </div>
+          </>
+        )}
+
         {/* المصارف */}
         {banks.length > 0 && (
           <>
-            <SectionDivider title="المصارف" icon="🏦" />
+            <SectionDivider title="الصكوك المصرفية" icon="🏦" />
             <div className="space-y-3">
               {banks.map((currency, index) => (
                 <CurrencyCard
                   key={currency.id}
                   currency={currency}
-                  index={index + currencies.length + gold.length}
+                  index={index + currencies.length + transfers.length + gold.length + crypto.length}
                 />
               ))}
             </div>

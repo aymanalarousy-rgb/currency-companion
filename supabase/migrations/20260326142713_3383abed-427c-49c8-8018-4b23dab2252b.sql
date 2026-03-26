@@ -1,0 +1,2 @@
+ALTER TABLE public.local_market_rates DROP CONSTRAINT local_market_rates_category_check;
+ALTER TABLE public.local_market_rates ADD CONSTRAINT local_market_rates_category_check CHECK (category = ANY (ARRAY['currency'::text, 'gold'::text, 'bank'::text, 'dollar'::text, 'euro'::text, 'transfer'::text, 'gold_intl'::text, 'crypto'::text]));
