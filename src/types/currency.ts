@@ -6,7 +6,7 @@ export interface CurrencyRate {
   change: number;
   flag: string;
   icon?: string;
-  category?: 'currency' | 'gold' | 'bank' | 'dollar' | 'euro' | 'transfer' | 'gold_intl';
+  category?: 'currency' | 'gold' | 'bank' | 'dollar' | 'euro' | 'transfer' | 'gold_intl' | 'crypto';
 }
 
 export interface GlobalCurrencyRate {

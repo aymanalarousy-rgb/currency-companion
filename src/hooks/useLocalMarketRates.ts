@@ -4,7 +4,9 @@ import { CurrencyRate } from "@/types/currency";
 
 interface LocalMarketState {
   currencies: CurrencyRate[];
+  transfers: CurrencyRate[];
   gold: CurrencyRate[];
+  crypto: CurrencyRate[];
   banks: CurrencyRate[];
   lastUpdate: string;
   loading: boolean;
