@@ -5,7 +5,7 @@ import { BottomNavigation } from "@/components/BottomNavigation";
 import { useLocalMarketRates } from "@/hooks/useLocalMarketRates";
 
 export const LocalMarket = () => {
-  const { currencies, gold, banks, lastUpdate, loading, error } = useLocalMarketRates();
+  const { currencies, transfers, gold, crypto, banks, lastUpdate, loading, error } = useLocalMarketRates();
 
   return (
     <div className="min-h-screen bg-background pb-24">
