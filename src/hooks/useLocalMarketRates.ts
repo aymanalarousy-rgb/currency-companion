@@ -16,7 +16,9 @@ interface LocalMarketState {
 export const useLocalMarketRates = () => {
   const [state, setState] = useState<LocalMarketState>({
     currencies: [],
+    transfers: [],
     gold: [],
+    crypto: [],
     banks: [],
     lastUpdate: new Date().toLocaleString("ar-LY"),
     loading: true,
