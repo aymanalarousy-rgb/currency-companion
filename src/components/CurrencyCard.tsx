@@ -55,7 +55,7 @@ export const CurrencyCard = ({ currency, index }: CurrencyCardProps) => {
               {currency.rate.toFixed(2)}
             </span>
             <span className="text-xs text-muted-foreground">
-              {currency.category === 'gold' ? 'جرام' : 'دينار'}
+              د.ل
             </span>
           </div>
           
