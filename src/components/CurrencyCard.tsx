@@ -30,8 +30,8 @@ export const CurrencyCard = ({ currency, index }: CurrencyCardProps) => {
   };
 
   const getCategoryStyle = () => {
-    if (currency.category === 'gold') return "border-r-4 border-r-accent";
-    if (currency.category === 'bank') return "border-r-4 border-r-chart-blue";
+    if (currency.category === 'dollar') return "border-r-4 border-r-accent";
+    if (currency.category === 'euro') return "border-r-4 border-r-chart-blue";
     return "";
   };
 
