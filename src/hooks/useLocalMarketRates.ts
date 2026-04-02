@@ -3,11 +3,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { CurrencyRate } from "@/types/currency";
 
 interface LocalMarketState {
-  currencies: CurrencyRate[];
+  dollar: CurrencyRate[];
+  euro: CurrencyRate[];
   transfers: CurrencyRate[];
-  gold: CurrencyRate[];
-  crypto: CurrencyRate[];
-  banks: CurrencyRate[];
   lastUpdate: string;
   loading: boolean;
   error: string | null;
@@ -15,11 +13,9 @@ interface LocalMarketState {
 
 export const useLocalMarketRates = () => {
   const [state, setState] = useState<LocalMarketState>({
-    currencies: [],
+    dollar: [],
+    euro: [],
     transfers: [],
-    gold: [],
-    crypto: [],
-    banks: [],
     lastUpdate: new Date().toLocaleString("ar-LY"),
     loading: true,
     error: null,
@@ -34,11 +30,9 @@ export const useLocalMarketRates = () => {
 
       if (error) throw error;
 
-      const currencies: CurrencyRate[] = [];
+      const dollar: CurrencyRate[] = [];
+      const euro: CurrencyRate[] = [];
       const transfers: CurrencyRate[] = [];
-      const gold: CurrencyRate[] = [];
-      const crypto: CurrencyRate[] = [];
-      const banks: CurrencyRate[] = [];
       let lastUpdateTime = new Date().toLocaleString("ar-LY");
 
       data?.forEach((item) => {
@@ -57,30 +51,22 @@ export const useLocalMarketRates = () => {
         }
 
         switch (item.category) {
-          case "currency":
-            currencies.push(rate);
+          case "dollar":
+            dollar.push(rate);
+            break;
+          case "euro":
+            euro.push(rate);
             break;
           case "transfer":
             transfers.push(rate);
-            break;
-          case "gold":
-            gold.push(rate);
-            break;
-          case "crypto":
-            crypto.push(rate);
-            break;
-          case "bank":
-            banks.push(rate);
             break;
         }
       });
 
       setState({
-        currencies,
+        dollar,
+        euro,
         transfers,
-        gold,
-        crypto,
-        banks,
         lastUpdate: lastUpdateTime,
         loading: false,
         error: null,
