@@ -30,8 +30,8 @@ export const CurrencyCard = ({ currency, index }: CurrencyCardProps) => {
   };
 
   const getCategoryStyle = () => {
-    if (currency.category === 'gold') return "border-r-4 border-r-accent";
-    if (currency.category === 'bank') return "border-r-4 border-r-chart-blue";
+    if (currency.category === 'dollar') return "border-r-4 border-r-accent";
+    if (currency.category === 'euro') return "border-r-4 border-r-chart-blue";
     return "";
   };
 
@@ -55,7 +55,7 @@ export const CurrencyCard = ({ currency, index }: CurrencyCardProps) => {
               {currency.rate.toFixed(2)}
             </span>
             <span className="text-xs text-muted-foreground">
-              {currency.category === 'gold' ? 'جرام' : 'دينار'}
+              د.ل
             </span>
           </div>
           
