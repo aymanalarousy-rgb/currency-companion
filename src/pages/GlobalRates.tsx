@@ -83,6 +83,8 @@ export const GlobalRates = () => {
     setIsLoading(false);
   };
 
+  useAdMobBanner('bottom', 1);
+
   useEffect(() => {
     setLastUpdate(formatDate());
   }, []);
