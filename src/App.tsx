@@ -8,8 +8,15 @@ import { LocalMarket } from "./pages/LocalMarket";
 import { Admin } from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 import { PrivacyPolicy } from "./pages/PrivacyPolicy";
+import { useAdMobInit, useAdMobPageTracker } from "./hooks/useAdMob";
 
 const queryClient = new QueryClient();
+
+const AdMobManager = () => {
+  useAdMobInit();
+  useAdMobPageTracker();
+  return null;
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -17,6 +24,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <AdMobManager />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/local" element={<LocalMarket />} />
