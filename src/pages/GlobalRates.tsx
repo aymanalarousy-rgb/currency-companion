@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { GlobalCurrencyCard } from "@/components/GlobalCurrencyCard";
 import { BottomNavigation } from "@/components/BottomNavigation";
-
+import { useAdMobBanner } from "@/hooks/useAdMob";
 import { GlobalCurrencyRate } from "@/types/currency";
 
 // Mock data - في الواقع سيتم جلبها من API خارجي
@@ -82,6 +82,8 @@ export const GlobalRates = () => {
     setLastUpdate(formatDate());
     setIsLoading(false);
   };
+
+  useAdMobBanner('bottom', 1);
 
   useEffect(() => {
     setLastUpdate(formatDate());

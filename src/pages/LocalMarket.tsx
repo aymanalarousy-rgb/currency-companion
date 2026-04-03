@@ -3,9 +3,11 @@ import { CurrencyCard } from "@/components/CurrencyCard";
 import { SectionDivider } from "@/components/SectionDivider";
 import { BottomNavigation } from "@/components/BottomNavigation";
 import { useLocalMarketRates } from "@/hooks/useLocalMarketRates";
+import { useAdMobBanner } from "@/hooks/useAdMob";
 
 export const LocalMarket = () => {
   const { dollar, euro, transfers, lastUpdate, loading, error } = useLocalMarketRates();
+  useAdMobBanner('bottom', 0);
 
   return (
     <div className="min-h-screen bg-background pb-24">

@@ -1,0 +1,119 @@
+import { AdMob, BannerAdSize, BannerAdPosition, BannerAdPluginEvents, AdmobConsentStatus, InterstitialAdPluginEvents } from '@capacitor-community/admob';
+import { Capacitor } from '@capacitor/core';
+
+// AdMob Configuration
+const AD_CONFIG = {
+  appId: 'ca-app-pub-4980157773430355~7963987243',
+  banners: [
+    'ca-app-pub-4980157773430355/9732707361',
+    'ca-app-pub-4980157773430355/2429969820',
+    'ca-app-pub-4980157773430355/8915487122',
+    'ca-app-pub-4980157773430355/9596975996',
+  ],
+  interstitials: [
+    'ca-app-pub-4980157773430355/5143763079',
+    'ca-app-pub-4980157773430355/1141667837',
+    'ca-app-pub-4980157773430355/8723915439',
+  ],
+};
+
+let isInitialized = false;
+let interstitialLoadCount = 0;
+let pageViewCount = 0;
+
+// Show interstitial every 4 page navigations (not too aggressive)
+const INTERSTITIAL_FREQUENCY = 4;
+
+export async function initializeAdMob(): Promise<void> {
+  if (!Capacitor.isNativePlatform() || isInitialized) return;
+
+  try {
+    await AdMob.initialize({
+      initializeForTesting: false,
+    });
+
+    // Request consent (GDPR compliance)
+    const consentInfo = await AdMob.requestConsentInfo();
+    if (consentInfo.isConsentFormAvailable && consentInfo.status === AdmobConsentStatus.REQUIRED) {
+      await AdMob.showConsentForm();
+    }
+
+    isInitialized = true;
+    console.log('AdMob initialized successfully');
+  } catch (error) {
+    console.error('AdMob initialization error:', error);
+  }
+}
+
+// Get a rotating banner ID based on position
+function getBannerAdId(position: number = 0): string {
+  return AD_CONFIG.banners[position % AD_CONFIG.banners.length];
+}
+
+// Get a rotating interstitial ID
+function getInterstitialAdId(): string {
+  const id = AD_CONFIG.interstitials[interstitialLoadCount % AD_CONFIG.interstitials.length];
+  interstitialLoadCount++;
+  return id;
+}
+
+export async function showBannerAd(position: 'top' | 'bottom' = 'bottom', slotIndex: number = 0): Promise<void> {
+  if (!Capacitor.isNativePlatform() || !isInitialized) return;
+
+  try {
+    await AdMob.showBanner({
+      adId: getBannerAdId(slotIndex),
+      adSize: BannerAdSize.ADAPTIVE_BANNER,
+      position: position === 'top' ? BannerAdPosition.TOP_CENTER : BannerAdPosition.BOTTOM_CENTER,
+      margin: position === 'bottom' ? 60 : 0, // Account for bottom navigation
+      isTesting: false,
+    });
+  } catch (error) {
+    console.error('Banner ad error:', error);
+  }
+}
+
+export async function hideBannerAd(): Promise<void> {
+  if (!Capacitor.isNativePlatform()) return;
+  try {
+    await AdMob.hideBanner();
+  } catch (error) {
+    // Banner might not be showing
+  }
+}
+
+export async function prepareInterstitial(): Promise<void> {
+  if (!Capacitor.isNativePlatform() || !isInitialized) return;
+
+  try {
+    await AdMob.prepareInterstitial({
+      adId: getInterstitialAdId(),
+      isTesting: false,
+    });
+  } catch (error) {
+    console.error('Interstitial prepare error:', error);
+  }
+}
+
+export async function showInterstitialIfReady(): Promise<void> {
+  if (!Capacitor.isNativePlatform() || !isInitialized) return;
+
+  pageViewCount++;
+
+  // Only show interstitial every N page views to avoid annoying users
+  if (pageViewCount % INTERSTITIAL_FREQUENCY !== 0) return;
+
+  try {
+    await AdMob.showInterstitial();
+    // Prepare next one after showing
+    setTimeout(() => prepareInterstitial(), 1000);
+  } catch (error) {
+    // Interstitial might not be loaded yet, prepare one
+    await prepareInterstitial();
+  }
+}
+
+// Track page navigation for smart interstitial timing
+export function trackPageView(): void {
+  showInterstitialIfReady();
+}
