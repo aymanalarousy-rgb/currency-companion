@@ -7,6 +7,7 @@ import { useAdMobBanner } from "@/hooks/useAdMob";
 
 export const LocalMarket = () => {
   const { dollar, euro, transfers, lastUpdate, loading, error } = useLocalMarketRates();
+  useAdMobBanner('bottom', 0);
 
   return (
     <div className="min-h-screen bg-background pb-24">
