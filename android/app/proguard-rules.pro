@@ -19,11 +19,3 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
-# Capacitor
--keep class com.getcapacitor.** { *; }
--keep class com.mediagrid.** { *; }
--dontwarn com.getcapacitor.**
-
-# Keep JavaScript interfaces
--keepclassmembers class * {
-    @android.webkit.JavascriptInterface <methods>;
