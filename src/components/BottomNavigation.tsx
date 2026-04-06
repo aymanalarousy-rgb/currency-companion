@@ -18,6 +18,12 @@ export const BottomNavigation = () => {
       icon: Store,
       path: "/local",
     },
+    {
+      id: "calculator",
+      label: "حاسبة",
+      icon: Calculator,
+      path: "/calculator",
+    },
   ];
 
   return (
