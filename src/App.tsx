@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import { LocalMarket } from "./pages/LocalMarket";
 import { Admin } from "./pages/Admin";
+import { Calculator } from "./pages/Calculator";
 import NotFound from "./pages/NotFound";
 import { PrivacyPolicy } from "./pages/PrivacyPolicy";
 import { useAdMobInit, useAdMobPageTracker } from "./hooks/useAdMob";
