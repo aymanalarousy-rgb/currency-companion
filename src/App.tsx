@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import { LocalMarket } from "./pages/LocalMarket";
 import { Admin } from "./pages/Admin";
+import { Calculator } from "./pages/Calculator";
 import NotFound from "./pages/NotFound";
 import { PrivacyPolicy } from "./pages/PrivacyPolicy";
 import { useAdMobInit, useAdMobPageTracker } from "./hooks/useAdMob";
@@ -28,6 +29,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/local" element={<LocalMarket />} />
+          <Route path="/calculator" element={<Calculator />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
