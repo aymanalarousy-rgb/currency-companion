@@ -1,4 +1,4 @@
-import { Globe, Store } from "lucide-react";
+import { Globe, Store, Calculator } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 export const BottomNavigation = () => {
