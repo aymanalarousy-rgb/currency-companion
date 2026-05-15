@@ -21,8 +21,8 @@ let isInitialized = false;
 let interstitialLoadCount = 0;
 let pageViewCount = 0;
 
-// Show interstitial every 4 page navigations (not too aggressive)
-const INTERSTITIAL_FREQUENCY = 4;
+// No app-side throttle — let AdMob decide when to serve an interstitial
+const INTERSTITIAL_FREQUENCY = 1;
 
 export async function initializeAdMob(): Promise<void> {
   if (!Capacitor.isNativePlatform() || isInitialized) return;
