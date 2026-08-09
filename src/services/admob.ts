@@ -117,3 +117,39 @@ export async function showInterstitialIfReady(): Promise<void> {
 export function trackPageView(): void {
   showInterstitialIfReady();
 }
+
+// ---------- Rewarded Ad (Calculator gate) ----------
+const REWARD_AD_ID = 'ca-app-pub-4980157773430355/8145266636';
+
+export async function prepareRewardAd(): Promise<void> {
+  if (!Capacitor.isNativePlatform()) return;
+  if (!isInitialized) await initializeAdMob();
+
+  try {
+    await AdMob.prepareRewardVideoAd({
+      adId: REWARD_AD_ID,
+      isTesting: false,
+    });
+  } catch (error) {
+    console.error('Reward ad prepare error:', error);
+  }
+}
+
+/**
+ * Shows a rewarded video ad. Resolves true when the user earned the reward
+ * (or when running on web / the ad failed to load, so users are never blocked).
+ */
+export async function showRewardAd(): Promise<boolean> {
+  if (!Capacitor.isNativePlatform()) return true;
+
+  try {
+    if (!isInitialized) await initializeAdMob();
+    await AdMob.prepareRewardVideoAd({ adId: REWARD_AD_ID, isTesting: false });
+    const reward = await AdMob.showRewardVideoAd();
+    return !!reward;
+  } catch (error) {
+    console.error('Reward ad error:', error);
+    // Don't lock the user out if no ad is available
+    return true;
+  }
+}
