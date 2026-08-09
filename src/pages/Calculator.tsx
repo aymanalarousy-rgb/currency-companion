@@ -1,9 +1,11 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { BottomNavigation } from "@/components/BottomNavigation";
 import { useLocalMarketRates } from "@/hooks/useLocalMarketRates";
 import { useAdMobBanner } from "@/hooks/useAdMob";
-import { ArrowDownUp } from "lucide-react";
+import { showRewardAd, prepareRewardAd } from "@/services/admob";
+import { Capacitor } from "@capacitor/core";
+import { ArrowDownUp, Gift, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 type Direction = "lyd_to_foreign" | "foreign_to_lyd";
@@ -18,9 +20,26 @@ export const Calculator = () => {
   const { dollar, euro, transfers, lastUpdate, loading } = useLocalMarketRates();
   useAdMobBanner("bottom", 0);
 
+  const [unlocked, setUnlocked] = useState(!Capacitor.isNativePlatform());
+  const [adLoading, setAdLoading] = useState(false);
+
+  useEffect(() => {
+    if (Capacitor.isNativePlatform()) {
+      prepareRewardAd();
+    }
+  }, []);
+
+  const handleWatchAd = async () => {
+    setAdLoading(true);
+    const earned = await showRewardAd();
+    setAdLoading(false);
+    if (earned) setUnlocked(true);
+  };
+
   const [amount, setAmount] = useState<string>("");
   const [selectedRateId, setSelectedRateId] = useState<string>("");
   const [direction, setDirection] = useState<Direction>("lyd_to_foreign");
+
 
   const rateOptions = useMemo<RateOption[]>(() => {
     const options: RateOption[] = [];
