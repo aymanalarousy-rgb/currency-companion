@@ -1,0 +1,1 @@
+UPDATE public.local_market_rates SET updated_at = now();
