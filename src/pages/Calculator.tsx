@@ -74,11 +74,34 @@ export const Calculator = () => {
       />
 
       <main className="px-4 py-4 space-y-4">
-        {loading ? (
+        {!unlocked ? (
+          <div className="bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 rounded-2xl p-6 text-center space-y-4">
+            <Gift className="w-12 h-12 text-primary mx-auto" />
+            <h2 className="text-lg font-bold text-foreground">شاهد إعلاناً لفتح الحاسبة</h2>
+            <p className="text-sm text-muted-foreground">
+              لاستخدام حاسبة العملات، يرجى مشاهدة إعلان قصير. شكراً لدعمك للتطبيق.
+            </p>
+            <button
+              onClick={handleWatchAd}
+              disabled={adLoading}
+              className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm transition-opacity disabled:opacity-60"
+            >
+              {adLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  جاري تحميل الإعلان...
+                </>
+              ) : (
+                "مشاهدة الإعلان والمتابعة"
+              )}
+            </button>
+          </div>
+        ) : loading ? (
           <div className="text-center py-8">
             <p className="text-muted-foreground">جاري تحميل الأسعار...</p>
           </div>
         ) : (
+
           <>
             {/* Rate selector */}
             <div className="space-y-2">
