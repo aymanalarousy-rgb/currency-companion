@@ -49,18 +49,18 @@ export const BottomNavigation = () => {
             <button
               key={tab.id}
               onClick={() => navigate(tab.path)}
-              className={`flex flex-col items-center gap-1 px-6 py-2 rounded-xl transition-all duration-300 ${
+              className={`flex flex-col items-center gap-1 px-2 py-2 rounded-xl transition-all duration-300 ${
                 isActive
                   ? "text-primary bg-primary/10"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
               <Icon
-                className={`w-6 h-6 transition-transform duration-300 ${
+                className={`w-5 h-5 transition-transform duration-300 ${
                   isActive ? "scale-110" : ""
                 }`}
               />
-              <span className={`text-xs font-medium ${isActive ? "font-semibold" : ""}`}>
+              <span className={`text-[10px] font-medium ${isActive ? "font-semibold" : ""}`}>
                 {tab.label}
               </span>
             </button>
