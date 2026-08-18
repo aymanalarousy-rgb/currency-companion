@@ -118,16 +118,22 @@ export function trackPageView(): void {
   showInterstitialIfReady();
 }
 
-// ---------- Rewarded Ad (Calculator gate) ----------
-const REWARD_AD_ID = 'ca-app-pub-4980157773430355/8145266636';
+// ---------- Rewarded Ads (gated sections) ----------
+export const REWARD_AD_IDS = {
+  calculator: 'ca-app-pub-4980157773430355/8145266636',
+  stocks: 'ca-app-pub-4980157773430355/8721907165',
+  crypto: 'ca-app-pub-4980157773430355/1250611259',
+} as const;
 
-export async function prepareRewardAd(): Promise<void> {
+const REWARD_AD_ID = REWARD_AD_IDS.calculator;
+
+export async function prepareRewardAd(adId: string = REWARD_AD_ID): Promise<void> {
   if (!Capacitor.isNativePlatform()) return;
   if (!isInitialized) await initializeAdMob();
 
   try {
     await AdMob.prepareRewardVideoAd({
-      adId: REWARD_AD_ID,
+      adId,
       isTesting: false,
     });
   } catch (error) {
@@ -139,12 +145,12 @@ export async function prepareRewardAd(): Promise<void> {
  * Shows a rewarded video ad. Resolves true when the user earned the reward
  * (or when running on web / the ad failed to load, so users are never blocked).
  */
-export async function showRewardAd(): Promise<boolean> {
+export async function showRewardAd(adId: string = REWARD_AD_ID): Promise<boolean> {
   if (!Capacitor.isNativePlatform()) return true;
 
   try {
     if (!isInitialized) await initializeAdMob();
-    await AdMob.prepareRewardVideoAd({ adId: REWARD_AD_ID, isTesting: false });
+    await AdMob.prepareRewardVideoAd({ adId, isTesting: false });
     const reward = await AdMob.showRewardVideoAd();
     return !!reward;
   } catch (error) {
@@ -153,3 +159,4 @@ export async function showRewardAd(): Promise<boolean> {
     return true;
   }
 }
+
