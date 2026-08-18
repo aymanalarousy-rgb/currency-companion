@@ -7,6 +7,8 @@ import Index from "./pages/Index";
 import { LocalMarket } from "./pages/LocalMarket";
 import { Admin } from "./pages/Admin";
 import { Calculator } from "./pages/Calculator";
+import { Stocks } from "./pages/Stocks";
+import { Crypto } from "./pages/Crypto";
 import NotFound from "./pages/NotFound";
 import { PrivacyPolicy } from "./pages/PrivacyPolicy";
 import { useAdMobInit, useAdMobPageTracker } from "./hooks/useAdMob";
