@@ -19,6 +19,18 @@ export const BottomNavigation = () => {
       path: "/local",
     },
     {
+      id: "stocks",
+      label: "الأسهم",
+      icon: LineChart,
+      path: "/stocks",
+    },
+    {
+      id: "crypto",
+      label: "الرقمية",
+      icon: Bitcoin,
+      path: "/crypto",
+    },
+    {
       id: "calculator",
       label: "حاسبة",
       icon: Calculator,
