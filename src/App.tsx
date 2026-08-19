@@ -7,6 +7,8 @@ import Index from "./pages/Index";
 import { LocalMarket } from "./pages/LocalMarket";
 import { Admin } from "./pages/Admin";
 import { Calculator } from "./pages/Calculator";
+import { Stocks } from "./pages/Stocks";
+import { Crypto } from "./pages/Crypto";
 import NotFound from "./pages/NotFound";
 import { PrivacyPolicy } from "./pages/PrivacyPolicy";
 import { useAdMobInit, useAdMobPageTracker } from "./hooks/useAdMob";
@@ -30,6 +32,8 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/local" element={<LocalMarket />} />
           <Route path="/calculator" element={<Calculator />} />
+          <Route path="/stocks" element={<Stocks />} />
+          <Route path="/crypto" element={<Crypto />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
