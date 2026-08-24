@@ -61,17 +61,25 @@ export async function showBannerAd(position: 'top' | 'bottom' = 'bottom', slotIn
   if (!Capacitor.isNativePlatform() || !isInitialized) return;
 
   try {
+    // Keep the real banner height in sync with the layout so the ad never
+    // covers app content (AdMob policy: ads must not hide content).
+    AdMob.addListener(BannerAdPluginEvents.SizeChanged, (info: { height: number }) => {
+      const h = info?.height ? `${info.height}px` : '60px';
+      document.documentElement.style.setProperty('--banner-h', h);
+    });
+
     await AdMob.showBanner({
       adId: getBannerAdId(slotIndex),
       adSize: BannerAdSize.ADAPTIVE_BANNER,
       position: position === 'top' ? BannerAdPosition.TOP_CENTER : BannerAdPosition.BOTTOM_CENTER,
-      margin: position === 'bottom' ? 60 : 0, // Account for bottom navigation
+      margin: 0,
       isTesting: false,
     });
   } catch (error) {
     console.error('Banner ad error:', error);
   }
 }
+
 
 export async function hideBannerAd(): Promise<void> {
   if (!Capacitor.isNativePlatform()) return;

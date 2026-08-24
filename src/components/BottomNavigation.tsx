@@ -39,7 +39,7 @@ export const BottomNavigation = () => {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-lg border-t border-border safe-area-pb">
+    <nav className="bottom-nav fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-lg border-t border-border safe-area-pb">
       <div className="flex items-center justify-around py-2">
         {tabs.map((tab) => {
           const isActive = location.pathname === tab.path;

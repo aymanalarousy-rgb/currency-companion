@@ -21,13 +21,16 @@ export function useAdMobBanner(position: 'top' | 'bottom' = 'bottom', slotIndex:
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
 
+    document.documentElement.classList.add('native-banner');
     showBannerAd(position, slotIndex);
 
     return () => {
+      document.documentElement.classList.remove('native-banner');
       hideBannerAd();
     };
   }, [position, slotIndex]);
 }
+
 
 export function useAdMobPageTracker() {
   const location = useLocation();

@@ -147,3 +147,16 @@
     transform: translateY(0);
   }
 }
+
+/* Reserve real space for the native AdMob banner so it never covers content */
+html.native-banner {
+  --banner-h: 60px;
+}
+
+html.native-banner .bottom-nav {
+  bottom: var(--banner-h);
+}
+
+html.native-banner main {
+  padding-bottom: calc(var(--banner-h) + 1rem);
+}
