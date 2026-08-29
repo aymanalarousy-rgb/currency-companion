@@ -17,6 +17,12 @@ export const LocalMarket = () => {
         lastUpdate={lastUpdate}
       />
 
+      <div className="mx-4 mt-3 p-3 rounded-lg bg-destructive/10 border border-destructive/20">
+        <p className="text-sm text-destructive text-center font-medium leading-relaxed">
+          عذرا حدث خطأ في النظام سنرجع في اقرب وقت بعد 72 ساعه
+        </p>
+      </div>
+
       <main className="px-4 py-4">
         {loading && (
           <div className="text-center py-8">
