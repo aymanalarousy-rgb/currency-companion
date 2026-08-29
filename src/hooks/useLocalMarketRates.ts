@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
+import { db } from "@/integrations/firebase/config";
 import { CurrencyRate } from "@/types/currency";
 
 interface LocalMarketState {
@@ -11,6 +12,42 @@ interface LocalMarketState {
   error: string | null;
 }
 
+const getCategory = (
+  id: string,
+  name: string,
+  nameAr: string,
+  category?: string
+): CurrencyRate["category"] => {
+  // If the document already uses the new categories, keep it
+  if (category === "dollar" || category === "euro" || category === "transfer") {
+    return category;
+  }
+
+  const lowerId = id.toLowerCase();
+  const lowerName = name.toLowerCase();
+  const lowerNameAr = nameAr.toLowerCase();
+
+  if (
+    lowerId.startsWith("usd") ||
+    lowerName.includes("usd") ||
+    lowerNameAr.includes("دولار")
+  ) {
+    return "dollar";
+  }
+
+  if (
+    lowerId.startsWith("eur") ||
+    lowerName.includes("euro") ||
+    lowerName.includes("eur") ||
+    lowerNameAr.includes("يورو")
+  ) {
+    return "euro";
+  }
+
+  // Banks, Vodafone, and any other items go to transfers
+  return "transfer";
+};
+
 export const useLocalMarketRates = () => {
   const [state, setState] = useState<LocalMarketState>({
     dollar: [],
@@ -21,87 +58,75 @@ export const useLocalMarketRates = () => {
     error: null,
   });
 
-  const fetchRates = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("local_market_rates")
-        .select("*")
-        .order("sort_order", { ascending: true });
-
-      if (error) throw error;
-
-      const dollar: CurrencyRate[] = [];
-      const euro: CurrencyRate[] = [];
-      const transfers: CurrencyRate[] = [];
-      let lastUpdateTime = new Date().toLocaleString("ar-LY");
-
-      data?.forEach((item) => {
-        const rate: CurrencyRate = {
-          id: item.id,
-          name: item.name,
-          nameAr: item.name_ar,
-          rate: Number(item.rate),
-          change: Number(item.change),
-          flag: item.flag,
-          category: item.category as CurrencyRate["category"],
-        };
-
-        if (item.updated_at) {
-          lastUpdateTime = new Date(item.updated_at).toLocaleString("ar-LY");
-        }
-
-        switch (item.category) {
-          case "dollar":
-            dollar.push(rate);
-            break;
-          case "euro":
-            euro.push(rate);
-            break;
-          case "transfer":
-            transfers.push(rate);
-            break;
-        }
-      });
-
-      setState({
-        dollar,
-        euro,
-        transfers,
-        lastUpdate: lastUpdateTime,
-        loading: false,
-        error: null,
-      });
-    } catch (error) {
-      console.error("Error fetching local market rates:", error);
-      setState((prev) => ({
-        ...prev,
-        loading: false,
-        error: "فشل في تحميل البيانات",
-      }));
-    }
-  };
-
   useEffect(() => {
-    fetchRates();
+    const ratesRef = collection(db, "local_market");
+    const q = query(ratesRef, orderBy("order", "asc"));
 
-    const channel = supabase
-      .channel("local_market_rates_changes")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "local_market_rates",
-        },
-        () => {
-          fetchRates();
-        }
-      )
-      .subscribe();
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const dollar: CurrencyRate[] = [];
+        const euro: CurrencyRate[] = [];
+        const transfers: CurrencyRate[] = [];
+        let lastUpdateTime = new Date().toLocaleString("ar-LY");
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          const category = getCategory(
+            doc.id,
+            data.name || "",
+            data.nameAr || "",
+            data.category
+          );
+
+          const rate: CurrencyRate = {
+            id: doc.id,
+            name: data.name || "",
+            nameAr: data.nameAr || "",
+            rate: Number(data.rate) || 0,
+            change: Number(data.change) || 0,
+            flag: data.flag || "",
+            category,
+          };
+
+          if (data.updatedAt) {
+            lastUpdateTime = data.updatedAt.toDate().toLocaleString("ar-LY");
+          }
+
+          switch (category) {
+            case "dollar":
+              dollar.push(rate);
+              break;
+            case "euro":
+              euro.push(rate);
+              break;
+            case "transfer":
+            default:
+              transfers.push(rate);
+              break;
+          }
+        });
+
+        setState({
+          dollar,
+          euro,
+          transfers,
+          lastUpdate: lastUpdateTime,
+          loading: false,
+          error: null,
+        });
+      },
+      (error) => {
+        console.error("Error fetching local market rates:", error);
+        setState((prev) => ({
+          ...prev,
+          loading: false,
+          error: "فشل في تحميل البيانات",
+        }));
+      }
+    );
+
+    return () => unsubscribe();
   }, []);
 
   return state;
