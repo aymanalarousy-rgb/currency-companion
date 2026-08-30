@@ -1,17 +1,12 @@
-/**
- * BACKUP VERSION - Firebase Local Market Rates Hook
- * Replace src/hooks/useLocalMarketRates.ts with this file to use Firebase instead of Supabase
- */
-
 import { useState, useEffect } from "react";
 import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
 import { db } from "@/integrations/firebase/config";
 import { CurrencyRate } from "@/types/currency";
 
 interface LocalMarketState {
-  currencies: CurrencyRate[];
-  gold: CurrencyRate[];
-  banks: CurrencyRate[];
+  dollar: CurrencyRate[];
+  euro: CurrencyRate[];
+  transfers: CurrencyRate[];
   lastUpdate: string;
   loading: boolean;
   error: string | null;
@@ -19,9 +14,9 @@ interface LocalMarketState {
 
 export const useLocalMarketRates = () => {
   const [state, setState] = useState<LocalMarketState>({
-    currencies: [],
-    gold: [],
-    banks: [],
+    dollar: [],
+    euro: [],
+    transfers: [],
     lastUpdate: new Date().toLocaleString("ar-LY"),
     loading: true,
     error: null,
@@ -34,13 +29,14 @@ export const useLocalMarketRates = () => {
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
-        const currencies: CurrencyRate[] = [];
-        const gold: CurrencyRate[] = [];
-        const banks: CurrencyRate[] = [];
+        const dollar: CurrencyRate[] = [];
+        const euro: CurrencyRate[] = [];
+        const transfers: CurrencyRate[] = [];
         let lastUpdateTime = new Date().toLocaleString("ar-LY");
 
         snapshot.forEach((doc) => {
           const data = doc.data();
+          
           const rate: CurrencyRate = {
             id: doc.id,
             name: data.name || "",
@@ -48,7 +44,7 @@ export const useLocalMarketRates = () => {
             rate: Number(data.rate) || 0,
             change: Number(data.change) || 0,
             flag: data.flag || "",
-            category: data.category as "currency" | "gold" | "bank",
+            category: data.category,
           };
 
           if (data.updatedAt) {
@@ -56,21 +52,23 @@ export const useLocalMarketRates = () => {
           }
 
           switch (data.category) {
-            case "gold":
-              gold.push(rate);
+            case "dollar":
+              dollar.push(rate);
               break;
-            case "bank":
-              banks.push(rate);
+            case "euro":
+              euro.push(rate);
               break;
+            case "transfer":
             default:
-              currencies.push(rate);
+              transfers.push(rate);
+              break;
           }
         });
 
         setState({
-          currencies,
-          gold,
-          banks,
+          dollar,
+          euro,
+          transfers,
           lastUpdate: lastUpdateTime,
           loading: false,
           error: null,

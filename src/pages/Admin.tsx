@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
-import { ArrowLeft, Save, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Save } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface RateItem {
@@ -15,23 +15,9 @@ interface RateItem {
   rate: number;
   change: number;
   flag: string;
-  category: "currency" | "gold" | "bank";
+  category: "dollar" | "euro" | "transfer";
   order: number;
 }
-
-// Default rates to initialize
-const defaultRates: RateItem[] = [
-  { id: "usd-blue", name: "USD Blue", nameAr: "الدولار (ازرق)", rate: 8.90, change: 0.34, flag: "🇺🇸", category: "currency", order: 1 },
-  { id: "usd-white", name: "USD White", nameAr: "الدولار (ابيض)", rate: 8.65, change: 0.00, flag: "🇺🇸", category: "currency", order: 2 },
-  { id: "usd-turkey", name: "USD Turkey", nameAr: "الدولار (تركيا)", rate: 8.89, change: 0.28, flag: "🇺🇸", category: "currency", order: 3 },
-  { id: "usd-dubai", name: "USD Dubai", nameAr: "الدولار (دبي)", rate: 8.91, change: 0.22, flag: "🇺🇸", category: "currency", order: 4 },
-  { id: "eur", name: "Euro", nameAr: "اليورو", rate: 10.19, change: 0.15, flag: "🇪🇺", category: "currency", order: 5 },
-  { id: "gbp", name: "British Pound", nameAr: "الجنيه الإسترليني", rate: 11.52, change: 1.50, flag: "🇬🇧", category: "currency", order: 6 },
-  { id: "tnd", name: "Tunisian Dinar", nameAr: "الدينار التونسي", rate: 0.34, change: -1.43, flag: "🇹🇳", category: "currency", order: 7 },
-  { id: "gold", name: "Gold (Scrap)", nameAr: "الذهب (كسر)", rate: 946.00, change: -0.21, flag: "🏅", category: "gold", order: 8 },
-  { id: "bank-tanmiya", name: "Development Bank", nameAr: "المصارف (التنمية)", rate: 10.15, change: -0.29, flag: "🏦", category: "bank", order: 9 },
-  { id: "bank-wahda", name: "Wahda Bank", nameAr: "المصارف (الوحدة)", rate: 10.14, change: -0.20, flag: "🏦", category: "bank", order: 10 },
-];
 
 export const Admin = () => {
   const [rates, setRates] = useState<RateItem[]>([]);
@@ -43,26 +29,21 @@ export const Admin = () => {
     const q = query(ratesRef, orderBy("order", "asc"));
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      if (snapshot.empty) {
-        // No data in Firebase, use defaults
-        setRates(defaultRates);
-      } else {
-        const fetchedRates: RateItem[] = [];
-        snapshot.forEach((doc) => {
-          const data = doc.data();
-          fetchedRates.push({
-            id: doc.id,
-            name: data.name || "",
-            nameAr: data.nameAr || "",
-            rate: Number(data.rate) || 0,
-            change: Number(data.change) || 0,
-            flag: data.flag || "",
-            category: data.category || "currency",
-            order: Number(data.order) || 0,
-          });
+      const fetchedRates: RateItem[] = [];
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        fetchedRates.push({
+          id: doc.id,
+          name: data.name || "",
+          nameAr: data.nameAr || "",
+          rate: Number(data.rate) || 0,
+          change: Number(data.change) || 0,
+          flag: data.flag || "",
+          category: data.category || "dollar",
+          order: Number(data.order) || 0,
         });
-        setRates(fetchedRates);
-      }
+      });
+      setRates(fetchedRates);
       setLoading(false);
     });
 
@@ -85,11 +66,11 @@ export const Admin = () => {
         await setDoc(docRef, {
           name: rate.name,
           nameAr: rate.nameAr,
-          rate: rate.rate,
-          change: rate.change,
+          rate: Number(rate.rate),
+          change: Number(rate.change),
           flag: rate.flag,
           category: rate.category,
-          order: rate.order,
+          order: Number(rate.order),
           updatedAt: new Date(),
         });
       }
@@ -108,48 +89,17 @@ export const Admin = () => {
     setSaving(false);
   };
 
-  const initializeDefaults = async () => {
-    setSaving(true);
-    try {
-      for (const rate of defaultRates) {
-        const docRef = doc(db, "local_market", rate.id);
-        await setDoc(docRef, {
-          name: rate.name,
-          nameAr: rate.nameAr,
-          rate: rate.rate,
-          change: rate.change,
-          flag: rate.flag,
-          category: rate.category,
-          order: rate.order,
-          updatedAt: new Date(),
-        });
-      }
-      toast({
-        title: "تم التهيئة ✅",
-        description: "تم إضافة جميع البيانات الافتراضية",
-      });
-    } catch (error) {
-      console.error("Error initializing:", error);
-      toast({
-        title: "خطأ",
-        description: "فشل في التهيئة",
-        variant: "destructive",
-      });
-    }
-    setSaving(false);
-  };
-
   const getCategoryLabel = (category: string) => {
     switch (category) {
-      case "currency": return "💱 العملات";
-      case "gold": return "🥇 المعادن";
-      case "bank": return "🏦 المصارف";
+      case "dollar": return "🇺🇸 أسواق الدولار";
+      case "euro": return "🇪🇺 أسواق اليورو";
+      case "transfer": return "📱 الحوالات والخدمات";
       default: return category;
     }
   };
 
   const groupedRates = rates.reduce((acc, rate) => {
-    const cat = rate.category || "currency";
+    const cat = rate.category || "dollar";
     if (!acc[cat]) acc[cat] = [];
     acc[cat].push(rate);
     return acc;
@@ -165,7 +115,6 @@ export const Admin = () => {
 
   return (
     <div className="min-h-screen bg-background pb-8">
-      {/* Header */}
       <div className="bg-gradient-to-r from-primary/10 to-primary/5 border-b border-border">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
@@ -176,21 +125,12 @@ export const Admin = () => {
                 </Button>
               </Link>
               <div>
-                <h1 className="text-xl font-bold">لوحة التحكم</h1>
-                <p className="text-sm text-muted-foreground">تحديث أسعار السوق المحلي</p>
+                <h1 className="text-xl font-bold">لوحة التحكم (Firebase)</h1>
+                <p className="text-sm text-muted-foreground">تحديث أسعار السوق المحلي الحالية</p>
               </div>
             </div>
             <div className="flex gap-2">
-              <Button
-                variant="outline"
-                onClick={initializeDefaults}
-                disabled={saving}
-              >
-                <Plus className="h-4 w-4 ml-2" />
-                تهيئة الافتراضي
-              </Button>
               <Button onClick={saveAllRates} disabled={saving}>
-                <Save className="h-4 w-4 ml-2" />
                 {saving ? "جاري الحفظ..." : "حفظ الكل"}
               </Button>
             </div>
@@ -198,69 +138,40 @@ export const Admin = () => {
         </div>
       </div>
 
-      {/* Content */}
       <div className="container mx-auto px-4 py-6 space-y-6">
-        {["currency", "gold", "bank"].map((category) => (
+        {["dollar", "euro", "transfer"].map((category) => (
           <Card key={category}>
             <CardHeader>
               <CardTitle className="text-lg">{getCategoryLabel(category)}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {/* Header Row */}
                 <div className="grid grid-cols-12 gap-2 text-sm font-medium text-muted-foreground px-2">
                   <div className="col-span-1">الرمز</div>
                   <div className="col-span-3">الاسم (عربي)</div>
                   <div className="col-span-3">الاسم (English)</div>
                   <div className="col-span-2">السعر</div>
-                  <div className="col-span-2">التغيير %</div>
+                  <div className="col-span-2">التغيير</div>
                   <div className="col-span-1">الترتيب</div>
                 </div>
 
-                {/* Data Rows */}
                 {(groupedRates[category] || []).map((rate) => (
-                  <div
-                    key={rate.id}
-                    className="grid grid-cols-12 gap-2 items-center p-2 rounded-lg bg-secondary/30"
-                  >
-                    <div className="col-span-1 text-2xl">{rate.flag}</div>
+                  <div key={rate.id} className="grid grid-cols-12 gap-2 items-center border-b border-border/50 pb-2">
+                    <div className="col-span-1 font-mono text-xs text-muted-foreground truncate">{rate.flag}</div>
                     <div className="col-span-3">
-                      <Input
-                        value={rate.nameAr}
-                        onChange={(e) => updateRate(rate.id, "nameAr", e.target.value)}
-                        className="text-right"
-                        dir="rtl"
-                      />
+                      <Input value={rate.nameAr} onChange={(e) => updateRate(rate.id, "nameAr", e.target.value)} />
                     </div>
                     <div className="col-span-3">
-                      <Input
-                        value={rate.name}
-                        onChange={(e) => updateRate(rate.id, "name", e.target.value)}
-                      />
+                      <Input value={rate.name} onChange={(e) => updateRate(rate.id, "name", e.target.value)} />
                     </div>
                     <div className="col-span-2">
-                      <Input
-                        type="number"
-                        step="0.01"
-                        value={rate.rate}
-                        onChange={(e) => updateRate(rate.id, "rate", parseFloat(e.target.value) || 0)}
-                      />
+                      <Input type="number" step="0.001" value={rate.rate} onChange={(e) => updateRate(rate.id, "rate", parseFloat(e.target.value) || 0)} />
                     </div>
                     <div className="col-span-2">
-                      <Input
-                        type="number"
-                        step="0.01"
-                        value={rate.change}
-                        onChange={(e) => updateRate(rate.id, "change", parseFloat(e.target.value) || 0)}
-                        className={rate.change > 0 ? "text-green-500" : rate.change < 0 ? "text-red-500" : ""}
-                      />
+                      <Input type="number" step="0.01" value={rate.change} onChange={(e) => updateRate(rate.id, "change", parseFloat(e.target.value) || 0)} />
                     </div>
                     <div className="col-span-1">
-                      <Input
-                        type="number"
-                        value={rate.order}
-                        onChange={(e) => updateRate(rate.id, "order", parseInt(e.target.value) || 0)}
-                      />
+                      <Input type="number" value={rate.order} onChange={(e) => updateRate(rate.id, "order", parseInt(e.target.value) || 0)} />
                     </div>
                   </div>
                 ))}
@@ -268,13 +179,8 @@ export const Admin = () => {
             </CardContent>
           </Card>
         ))}
-
-        <div className="p-4 rounded-lg bg-secondary/50 border border-border">
-          <p className="text-sm text-muted-foreground text-center">
-            💡 اضغط "تهيئة الافتراضي" لإضافة كل البيانات دفعة واحدة، ثم عدّل الأرقام واضغط "حفظ الكل"
-          </p>
-        </div>
       </div>
     </div>
   );
 };
+
