@@ -17,6 +17,8 @@ export const LocalMarket = () => {
         lastUpdate={lastUpdate}
       />
 
+
+
       <main className="px-4 py-4">
         {loading && (
           <div className="text-center py-8">

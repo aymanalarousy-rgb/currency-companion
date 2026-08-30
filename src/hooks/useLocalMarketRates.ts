@@ -12,6 +12,42 @@ interface LocalMarketState {
   error: string | null;
 }
 
+const getCategory = (
+  id: string,
+  name: string,
+  nameAr: string,
+  category?: string
+): CurrencyRate["category"] => {
+  // If the document already uses the new categories, keep it
+  if (category === "dollar" || category === "euro" || category === "transfer") {
+    return category;
+  }
+
+  const lowerId = id.toLowerCase();
+  const lowerName = name.toLowerCase();
+  const lowerNameAr = nameAr.toLowerCase();
+
+  if (
+    lowerId.startsWith("usd") ||
+    lowerName.includes("usd") ||
+    lowerNameAr.includes("دولار")
+  ) {
+    return "dollar";
+  }
+
+  if (
+    lowerId.startsWith("eur") ||
+    lowerName.includes("euro") ||
+    lowerName.includes("eur") ||
+    lowerNameAr.includes("يورو")
+  ) {
+    return "euro";
+  }
+
+  // Banks, Vodafone, and any other items go to transfers
+  return "transfer";
+};
+
 export const useLocalMarketRates = () => {
   const [state, setState] = useState<LocalMarketState>({
     dollar: [],
@@ -36,7 +72,13 @@ export const useLocalMarketRates = () => {
 
         snapshot.forEach((doc) => {
           const data = doc.data();
-          
+          const category = getCategory(
+            doc.id,
+            data.name || "",
+            data.nameAr || "",
+            data.category
+          );
+
           const rate: CurrencyRate = {
             id: doc.id,
             name: data.name || "",
@@ -44,15 +86,14 @@ export const useLocalMarketRates = () => {
             rate: Number(data.rate) || 0,
             change: Number(data.change) || 0,
             flag: data.flag || "",
-            category: data.category,
+            category,
           };
 
           if (data.updatedAt) {
             lastUpdateTime = data.updatedAt.toDate().toLocaleString("ar-LY");
           }
 
-          // هذا الجزء يطابق الأقسام الثلاثة الموجودة في Firebase والواجهة الخاصة بك
-          switch (data.category) {
+          switch (category) {
             case "dollar":
               dollar.push(rate);
               break;
