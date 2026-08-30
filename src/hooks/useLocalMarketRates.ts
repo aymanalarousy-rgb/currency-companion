@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
+import { db } from "@/integrations/firebase/config";
 import { CurrencyRate } from "@/types/currency";
 
 interface LocalMarketState {
@@ -21,87 +22,70 @@ export const useLocalMarketRates = () => {
     error: null,
   });
 
-  const fetchRates = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("local_market_rates")
-        .select("*")
-        .order("sort_order", { ascending: true });
-
-      if (error) throw error;
-
-      const dollar: CurrencyRate[] = [];
-      const euro: CurrencyRate[] = [];
-      const transfers: CurrencyRate[] = [];
-      let lastUpdateTime = new Date().toLocaleString("ar-LY");
-
-      data?.forEach((item) => {
-        const rate: CurrencyRate = {
-          id: item.id,
-          name: item.name,
-          nameAr: item.name_ar,
-          rate: Number(item.rate),
-          change: Number(item.change),
-          flag: item.flag,
-          category: item.category as CurrencyRate["category"],
-        };
-
-        if (item.updated_at) {
-          lastUpdateTime = new Date(item.updated_at).toLocaleString("ar-LY");
-        }
-
-        switch (item.category) {
-          case "dollar":
-            dollar.push(rate);
-            break;
-          case "euro":
-            euro.push(rate);
-            break;
-          case "transfer":
-            transfers.push(rate);
-            break;
-        }
-      });
-
-      setState({
-        dollar,
-        euro,
-        transfers,
-        lastUpdate: lastUpdateTime,
-        loading: false,
-        error: null,
-      });
-    } catch (error) {
-      console.error("Error fetching local market rates:", error);
-      setState((prev) => ({
-        ...prev,
-        loading: false,
-        error: "فشل في تحميل البيانات",
-      }));
-    }
-  };
-
   useEffect(() => {
-    fetchRates();
+    const ratesRef = collection(db, "local_market");
+    const q = query(ratesRef, orderBy("order", "asc"));
 
-    const channel = supabase
-      .channel("local_market_rates_changes")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "local_market_rates",
-        },
-        () => {
-          fetchRates();
-        }
-      )
-      .subscribe();
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const dollar: CurrencyRate[] = [];
+        const euro: CurrencyRate[] = [];
+        const transfers: CurrencyRate[] = [];
+        let lastUpdateTime = new Date().toLocaleString("ar-LY");
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          
+          const rate: CurrencyRate = {
+            id: doc.id,
+            name: data.name || "",
+            nameAr: data.nameAr || "",
+            rate: Number(data.rate) || 0,
+            change: Number(data.change) || 0,
+            flag: data.flag || "",
+            category: data.category,
+          };
+
+          if (data.updatedAt) {
+            lastUpdateTime = data.updatedAt.toDate().toLocaleString("ar-LY");
+          }
+
+          // هذا الجزء يطابق الأقسام الثلاثة الموجودة في Firebase والواجهة الخاصة بك
+          switch (data.category) {
+            case "dollar":
+              dollar.push(rate);
+              break;
+            case "euro":
+              euro.push(rate);
+              break;
+            case "transfer":
+            default:
+              transfers.push(rate);
+              break;
+          }
+        });
+
+        setState({
+          dollar,
+          euro,
+          transfers,
+          lastUpdate: lastUpdateTime,
+          loading: false,
+          error: null,
+        });
+      },
+      (error) => {
+        console.error("Error fetching local market rates:", error);
+        setState((prev) => ({
+          ...prev,
+          loading: false,
+          error: "فشل في تحميل البيانات",
+        }));
+      }
+    );
+
+    return () => unsubscribe();
   }, []);
 
   return state;
