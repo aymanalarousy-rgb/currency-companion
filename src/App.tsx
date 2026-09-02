@@ -12,6 +12,7 @@ import { Crypto } from "./pages/Crypto";
 import NotFound from "./pages/NotFound";
 import { PrivacyPolicy } from "./pages/PrivacyPolicy";
 import { useAdMobInit, useAdMobPageTracker } from "./hooks/useAdMob";
+import { RateUsPopup } from "./components/RateUsPopup";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AdMobManager />
+        <RateUsPopup />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/local" element={<LocalMarket />} />

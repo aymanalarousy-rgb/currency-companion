@@ -4,6 +4,7 @@ import { SectionDivider } from "@/components/SectionDivider";
 import { BottomNavigation } from "@/components/BottomNavigation";
 import { useLocalMarketRates } from "@/hooks/useLocalMarketRates";
 import { useAdMobBanner } from "@/hooks/useAdMob";
+import { Facebook } from "lucide-react";
 
 export const LocalMarket = () => {
   const { dollar, euro, transfers, lastUpdate, loading, error } = useLocalMarketRates();
@@ -17,7 +18,19 @@ export const LocalMarket = () => {
         lastUpdate={lastUpdate}
       />
 
-
+      <div className="px-4 pt-2 pb-0">
+        <a
+          href="https://www.facebook.com/share/1DVxxPPM1A/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-3 p-3 rounded-xl bg-primary/10 border border-primary/20 text-foreground hover:bg-primary/15 transition-colors"
+        >
+          <Facebook className="w-5 h-5 text-primary flex-shrink-0" />
+          <span className="text-sm font-medium leading-snug">
+            تابع صفحتنا لمتابعة آخر تطورات أو الاستفسار عند حدوث انقطاع
+          </span>
+        </a>
+      </div>
 
       <main className="px-4 py-4">
         {loading && (
