@@ -5,6 +5,7 @@ import { BottomNavigation } from "@/components/BottomNavigation";
 import { useLocalMarketRates } from "@/hooks/useLocalMarketRates";
 import { useAdMobBanner } from "@/hooks/useAdMob";
 import { Browser } from "@capacitor/browser";
+import { Capacitor } from "@capacitor/core";
 import { Facebook } from "lucide-react";
 
 const FACEBOOK_URL = "https://www.facebook.com/share/1DVxxPPM1A/";
@@ -14,12 +15,21 @@ export const LocalMarket = () => {
   useAdMobBanner('bottom', 0);
 
   const openFacebook = async () => {
-    try {
-      await Browser.open({ url: FACEBOOK_URL });
-    } catch {
-      window.open(FACEBOOK_URL, "_blank", "noopener,noreferrer");
+    if (Capacitor.isNativePlatform()) {
+      try {
+        await Browser.open({ url: FACEBOOK_URL });
+        return;
+      } catch {
+        // fall through to web handling
+      }
+    }
+    // Web/preview: open in a real new top-level tab (never inside the iframe)
+    const win = window.open(FACEBOOK_URL, "_blank", "noopener,noreferrer");
+    if (!win) {
+      window.top?.location.assign(FACEBOOK_URL);
     }
   };
+
 
   return (
     <div className="min-h-screen bg-background pb-24">
