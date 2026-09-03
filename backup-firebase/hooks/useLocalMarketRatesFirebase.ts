@@ -1,14 +1,3 @@
-/**
- * BACKUP VERSION - Firebase Local Market Rates Hook
- * Replace src/hooks/useLocalMarketRates.ts with this file to use Firebase instead of Lovable Cloud.
- *
- * Expected Firebase collection: local_market
- * Expected documents:
- *   - usd-cash, usd-transfer, usd-card       -> category: "dollar"
- *   - eur-cash, eur-transfer, eur-card       -> category: "euro"
- *   - vodafone-lyd, vodafone-bank            -> category: "transfer"
- */
-
 import { useState, useEffect } from "react";
 import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
 import { db } from "@/integrations/firebase/config";
@@ -22,42 +11,6 @@ interface LocalMarketState {
   loading: boolean;
   error: string | null;
 }
-
-const getCategory = (
-  id: string,
-  name: string,
-  nameAr: string,
-  category?: string
-): CurrencyRate["category"] => {
-  // If the document already uses the new categories, keep it
-  if (category === "dollar" || category === "euro" || category === "transfer") {
-    return category;
-  }
-
-  const lowerId = id.toLowerCase();
-  const lowerName = name.toLowerCase();
-  const lowerNameAr = nameAr.toLowerCase();
-
-  if (
-    lowerId.startsWith("usd") ||
-    lowerName.includes("usd") ||
-    lowerNameAr.includes("دولار")
-  ) {
-    return "dollar";
-  }
-
-  if (
-    lowerId.startsWith("eur") ||
-    lowerName.includes("euro") ||
-    lowerName.includes("eur") ||
-    lowerNameAr.includes("يورو")
-  ) {
-    return "euro";
-  }
-
-  // Vodafone and any other transfer-like items go here
-  return "transfer";
-};
 
 export const useLocalMarketRates = () => {
   const [state, setState] = useState<LocalMarketState>({
@@ -83,13 +36,7 @@ export const useLocalMarketRates = () => {
 
         snapshot.forEach((doc) => {
           const data = doc.data();
-          const category = getCategory(
-            doc.id,
-            data.name || "",
-            data.nameAr || "",
-            data.category
-          );
-
+          
           const rate: CurrencyRate = {
             id: doc.id,
             name: data.name || "",
@@ -97,14 +44,14 @@ export const useLocalMarketRates = () => {
             rate: Number(data.rate) || 0,
             change: Number(data.change) || 0,
             flag: data.flag || "",
-            category,
+            category: data.category,
           };
 
           if (data.updatedAt) {
             lastUpdateTime = data.updatedAt.toDate().toLocaleString("ar-LY");
           }
 
-          switch (category) {
+          switch (data.category) {
             case "dollar":
               dollar.push(rate);
               break;
@@ -142,3 +89,4 @@ export const useLocalMarketRates = () => {
 
   return state;
 };
+
