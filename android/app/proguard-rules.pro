@@ -42,3 +42,32 @@
 -dontwarn com.google.android.gms.**
 -dontwarn com.unity3d.**
 -dontwarn com.inmobi.**
+
+# ---- R8 missing classes (optional deps referenced by ad SDKs) ----
+-dontwarn com.google.android.play.core.**
+-dontwarn com.google.firebase.**
+-dontwarn com.android.installreferrer.**
+-dontwarn com.squareup.picasso.**
+-dontwarn com.google.android.gms.common.**
+-dontwarn javax.annotation.**
+-dontwarn javax.lang.model.**
+-dontwarn org.slf4j.**
+-dontwarn kotlinx.**
+-dontwarn org.bouncycastle.**
+-dontwarn org.conscrypt.**
+-dontwarn org.openjsse.**
+-dontwarn okhttp3.**
+-dontwarn okio.**
+-dontwarn retrofit2.**
+-dontwarn androidx.window.**
+-dontwarn com.ironsource.**
+-dontwarn com.applovin.**
+-dontwarn com.vungle.**
+-dontwarn com.mbridge.**
+-dontwarn com.fyber.**
+-dontwarn com.chartboost.**
+
+# Keep AdMob mediation initialization entry points
+-keep class com.google.android.gms.ads.MobileAds { *; }
+-keep class * implements com.google.android.gms.ads.mediation.MediationAdapter { *; }
+-keep class * implements com.google.android.gms.ads.mediation.rtb.RtbAdapter { *; }
