@@ -5,6 +5,7 @@ import { Star, X } from "lucide-react";
 
 const PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.ayman.libyarates";
 const STORAGE_KEY = "rate_popup_last_shown";
+const RATED_KEY = "rate_popup_rated";
 
 export const RateUsPopup = () => {
   const [show, setShow] = useState(false);
@@ -20,6 +21,12 @@ export const RateUsPopup = () => {
 
       // At the root of the navigation stack: show rate prompt once per day,
       // otherwise exit immediately.
+      // Already rated: never ask again
+      if (localStorage.getItem(RATED_KEY) === "true") {
+        await App.exitApp();
+        return;
+      }
+
       const today = new Date().toISOString().split("T")[0];
       const lastShown = localStorage.getItem(STORAGE_KEY);
 
@@ -38,6 +45,7 @@ export const RateUsPopup = () => {
   }, []);
 
   const handleRate = () => {
+    localStorage.setItem(RATED_KEY, "true");
     window.open(PLAY_STORE_URL, "_system");
     setShow(false);
   };
