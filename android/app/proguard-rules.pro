@@ -55,6 +55,8 @@
 -dontwarn kotlinx.**
 -dontwarn org.bouncycastle.**
 -dontwarn org.conscrypt.**
+-dontwarn org.conscrypt.Conscrypt
+-dontwarn org.conscrypt.OpenSSLProvider
 -dontwarn org.openjsse.**
 -dontwarn okhttp3.**
 -dontwarn okio.**
